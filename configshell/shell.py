@@ -18,6 +18,7 @@ under the License.
 import os
 import sys
 from pyparsing import Empty, Group, OneOrMore, Optional, ParseResults, Regex, Suppress, Word
+from pyparsing import QuotedString, Or
 from pyparsing import alphanums
 
 import configshell.log as log
@@ -110,7 +111,8 @@ class ConfigShell(object):
         # Grammar of the command line
         command = locatedExpr(Word(alphanums + '_'))('command')
         var = Word(alphanums + '_\+/.<>()~@:-%]')
-        value = var
+        qvar = QuotedString('"', unquoteResults=True)
+        value = Or([qvar, var])
         keyword = Word(alphanums + '_\-')
         kparam = locatedExpr(keyword + Suppress('=') + Optional(value, default=''))('kparams*')
         pparam = locatedExpr(var)('pparams*')
